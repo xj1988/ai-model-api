@@ -27,6 +27,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.github.aimodel.util.JacksonUtils;
 import com.github.victools.jsonschema.generator.Option;
 import com.github.victools.jsonschema.generator.SchemaGenerator;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
@@ -200,62 +201,9 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
      */
     protected ObjectMapper getObjectMapper() {
         return JsonMapper.builder()
-                .addModules(instantiateAvailableModules())
+                .addModules(JacksonUtils.instantiateAvailableModules())
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
-    }
-
-    /**
-     * 实例化类路径中可用的、众所周知的Jackson模块。
-     * <p>
-     * 支持以下模块: <code>Jdk8Module</code>, <code>JavaTimeModule</code>,
-     * <code>ParameterNamesModule</code> and <code>KotlinModule</code>.
-     *
-     * @return 实例化模块的列表。
-     */
-    @SuppressWarnings("unchecked")
-    public static List<Module> instantiateAvailableModules() {
-        List<Module> modules = new ArrayList<>();
-        try {
-            Class<? extends com.fasterxml.jackson.databind.Module> jdk8ModuleClass = (Class<? extends Module>) ClassUtils
-                    .forName("com.fasterxml.jackson.datatype.jdk8.Jdk8Module", null);
-            com.fasterxml.jackson.databind.Module jdk8Module = BeanUtils.instantiateClass(jdk8ModuleClass);
-            modules.add(jdk8Module);
-        } catch (ClassNotFoundException ex) {
-            // jackson-datatype-jdk8 not available
-        }
-
-        try {
-            Class<? extends com.fasterxml.jackson.databind.Module> javaTimeModuleClass = (Class<? extends Module>) ClassUtils
-                    .forName("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule", null);
-            com.fasterxml.jackson.databind.Module javaTimeModule = BeanUtils.instantiateClass(javaTimeModuleClass);
-            modules.add(javaTimeModule);
-        } catch (ClassNotFoundException ex) {
-            // jackson-datatype-jsr310 not available
-        }
-
-        try {
-            Class<? extends com.fasterxml.jackson.databind.Module> parameterNamesModuleClass = (Class<? extends Module>) ClassUtils
-                    .forName("com.fasterxml.jackson.module.paramnames.ParameterNamesModule", null);
-            com.fasterxml.jackson.databind.Module parameterNamesModule = BeanUtils
-                    .instantiateClass(parameterNamesModuleClass);
-            modules.add(parameterNamesModule);
-        } catch (ClassNotFoundException ex) {
-            // jackson-module-parameter-names not available
-        }
-
-        // Kotlin present?
-        if (KotlinDetector.isKotlinPresent()) {
-            try {
-                Class<? extends com.fasterxml.jackson.databind.Module> kotlinModuleClass = (Class<? extends Module>) ClassUtils
-                        .forName("com.fasterxml.jackson.module.kotlin.KotlinModule", null);
-                Module kotlinModule = BeanUtils.instantiateClass(kotlinModuleClass);
-                modules.add(kotlinModule);
-            } catch (ClassNotFoundException ex) {
-                // jackson-module-kotlin not available
-            }
-        }
-        return modules;
     }
 
     /**

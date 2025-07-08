@@ -23,9 +23,10 @@ import com.github.aimodel.chat.messages.UserMessage;
 import com.github.aimodel.model.Model;
 import com.github.aimodel.chat.prompt.ChatOptions;
 import com.github.aimodel.chat.prompt.Prompt;
+import reactor.core.publisher.Flux;
 
 
-public interface ChatModel extends Model<Prompt, ChatResponse> {
+public interface ChatModel extends Model<Prompt, ChatResponse>, StreamingChatModel {
 
     default String call(String message) {
         Prompt prompt = new Prompt(new UserMessage(message));
@@ -44,6 +45,10 @@ public interface ChatModel extends Model<Prompt, ChatResponse> {
 
     default ChatOptions getDefaultOptions() {
         return ChatOptions.builder().build();
+    }
+
+    default Flux<ChatResponse> stream(Prompt prompt) {
+        throw new UnsupportedOperationException("streaming is not supported");
     }
 
 }

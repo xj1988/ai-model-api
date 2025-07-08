@@ -22,16 +22,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.aimodel.chat.metadata.ChatResponseMetadata;
 import com.github.aimodel.chat.metadata.DefaultUsage;
 import com.github.aimodel.chat.metadata.Usage;
-import com.github.aimodel.chat.model.ChatModel;
-import com.github.aimodel.chat.model.ChatResponse;
+import com.github.aimodel.chat.model.*;
 import com.github.aimodel.chat.messages.AssistantMessage;
 import com.github.aimodel.chat.messages.Message;
 import com.github.aimodel.chat.messages.SystemMessage;
 import com.github.aimodel.chat.messages.UserMessage;
-import com.github.aimodel.chat.model.Generation;
+import com.github.aimodel.chat.prompt.DefaultChatOptionsBuilder;
 import com.github.aimodel.chat.prompt.Prompt;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import reactor.core.publisher.Flux;
 
 
 import java.io.BufferedReader;
@@ -219,6 +219,18 @@ class ChatModelTests {
         assertThat(response.getMetadata().getId()).isNotNull();
         assertThat(response.getMetadata().getModel()).isNotNull();
         assertThat(response.getMetadata().getUsage()).isNotNull();
+    }
+
+    @Test
+    void chatCompletionStream() {
+        String modelId = System.getenv("YOUR_MODEL_ID");
+        String apiKey = System.getenv("YOUR_API_KEY");
+        ChatModel volcanoChatModel = new MoonshotChatModel(new MoonshotApi("https://ark.cn-beijing.volces.com/api/v3/chat/completions", apiKey));
+        Flux<ChatResponse> response = volcanoChatModel.stream(new Prompt(new UserMessage("Hello world"),
+                new DefaultChatOptionsBuilder().model(modelId).temperature(0.8).build()));
+
+        assertThat(response).isNotNull();
+        assertThat(response.collectList().block()).isNotNull();
     }
 
 }

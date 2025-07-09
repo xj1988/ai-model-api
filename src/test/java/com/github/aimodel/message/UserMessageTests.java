@@ -63,7 +63,7 @@ class UserMessageTests {
 
     @Test
     void userMessageWithResource() {
-        UserMessage message = new UserMessage(new ClassPathResource("prompt-user.txt"));
+        UserMessage message = new UserMessage(new ClassPathResource("user-prompt.txt"));
         assertThat(message.getText()).isEqualTo("Hello, world!");
         assertThat(message.getMedia()).isEmpty();
         assertThat(message.getMetadata()).hasSize(1).containsEntry(AbstractMessage.MESSAGE_TYPE, MessageType.USER);
@@ -77,7 +77,7 @@ class UserMessageTests {
         String text = "Hello, world!";
         UserMessage message = UserMessage.builder()
                 .text(text)
-                .media(new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("prompt-user.txt")))
+                .media(new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("user-prompt.txt")))
                 .metadata(metadata1)
                 .build();
         assertThat(message.getText()).isEqualTo(text);
@@ -89,7 +89,7 @@ class UserMessageTests {
 
     @Test
     void userMessageFromBuilderWithResource() {
-        UserMessage message = UserMessage.builder().text(new ClassPathResource("prompt-user.txt")).build();
+        UserMessage message = UserMessage.builder().text(new ClassPathResource("user-prompt.txt")).build();
         assertThat(message.getText()).isEqualTo("Hello, world!");
         assertThat(message.getMedia()).isEmpty();
         assertThat(message.getMetadata()).hasSize(1).containsEntry(AbstractMessage.MESSAGE_TYPE, MessageType.USER);
@@ -98,7 +98,7 @@ class UserMessageTests {
     @Test
     void userMessageCopy() {
         String text1 = "Hello, world!";
-        Media media1 = new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("prompt-user.txt"));
+        Media media1 = new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("user-prompt.txt"));
         Map<String, Object> metadata1 = new HashMap<>();
         metadata1.put("key", "value");
         UserMessage userMessage1 = UserMessage.builder().text(text1).media(media1).metadata(metadata1).build();
@@ -113,7 +113,7 @@ class UserMessageTests {
     @Test
     void userMessageMutate() {
         String text1 = "Hello, world!";
-        Media media1 = new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("prompt-user.txt"));
+        Media media1 = new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("user-prompt.txt"));
         Map<String, Object> metadata1 = new HashMap<>();
         metadata1.put("key", "value");
         UserMessage userMessage1 = UserMessage.builder().text(text1).media(media1).metadata(metadata1).build();

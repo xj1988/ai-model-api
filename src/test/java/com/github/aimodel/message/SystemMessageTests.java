@@ -58,7 +58,7 @@ class SystemMessageTests {
 
     @Test
     void systemMessageWithResource() {
-        SystemMessage message = new SystemMessage(new ClassPathResource("prompt-system.txt"));
+        SystemMessage message = new SystemMessage(new ClassPathResource("system-prompt.txt"));
         assertEquals("Tell me, did you sail across the sun?", message.getText());
         assertEquals(MessageType.SYSTEM, message.getMetadata().get(AbstractMessage.MESSAGE_TYPE));
     }
@@ -81,7 +81,7 @@ class SystemMessageTests {
 		Map<String, Object> metadata1 = new HashMap<>();
 		metadata1.put("key", "value");
 
-        Resource resource = new ClassPathResource("prompt-system.txt");
+        Resource resource = new ClassPathResource("system-prompt.txt");
         SystemMessage message = SystemMessage.builder().text(resource).metadata(metadata1).build();
         assertEquals("Tell me, did you sail across the sun?", message.getText());
         assertThat(message.getMetadata()).hasSize(2)

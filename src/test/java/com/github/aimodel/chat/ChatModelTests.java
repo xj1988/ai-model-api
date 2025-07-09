@@ -30,6 +30,7 @@ import com.github.aimodel.chat.messages.UserMessage;
 import com.github.aimodel.chat.prompt.DefaultChatOptionsBuilder;
 import com.github.aimodel.chat.prompt.Prompt;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.mockito.Mockito;
 import reactor.core.publisher.Flux;
 
@@ -108,13 +109,12 @@ class ChatModelTests {
     }
 
     @Test
+    @EnabledIfEnvironmentVariable(named = "YOUR_MODEL_ID", matches = ".+")
+    @EnabledIfEnvironmentVariable(named = "YOUR_API_KEY", matches = ".+")
     void testVolcanoEngineChatModelIntegration() {
         // 从环境变量获取配置
         String modelId = System.getenv("YOUR_MODEL_ID");
         String apiKey = System.getenv("YOUR_API_KEY");
-        if (modelId == null || apiKey == null) {
-            throw new IllegalStateException("YOUR_MODEL_ID and YOUR_API_KEY environment variables must be set");
-        }
 
         // 实现火山引擎ChatModel的匿名内部类
         ChatModel volcanoChatModel = prompt -> {
@@ -222,13 +222,12 @@ class ChatModelTests {
     }
 
     @Test
+    @EnabledIfEnvironmentVariable(named = "YOUR_MODEL_ID", matches = ".+")
+    @EnabledIfEnvironmentVariable(named = "YOUR_API_KEY", matches = ".+")
     void chatCompletionStream() {
         // 从环境变量获取配置
         String modelId = System.getenv("YOUR_MODEL_ID");
         String apiKey = System.getenv("YOUR_API_KEY");
-        if (modelId == null || apiKey == null) {
-            throw new IllegalStateException("YOUR_MODEL_ID and YOUR_API_KEY environment variables must be set");
-        }
 
         ChatModel volcanoChatModel = new MoonshotChatModel(new MoonshotApi("https://ark.cn-beijing.volces.com/", apiKey));
         Flux<ChatResponse> response = volcanoChatModel.stream(new Prompt(new UserMessage("Hello world"),

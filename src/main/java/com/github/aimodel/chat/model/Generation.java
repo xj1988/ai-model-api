@@ -24,7 +24,7 @@ import java.util.Objects;
 
 
 /**
- * 表示AI返回的响应。
+ * AI返回的响应。
  */
 public class Generation implements ModelResult<AssistantMessage> {
 

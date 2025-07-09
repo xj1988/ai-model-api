@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.aimodel.chat.prompt.ChatOptions;
 import com.github.aimodel.util.ModelOptionsUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -101,7 +102,7 @@ public class MoonshotApi {
         AtomicBoolean isInsideTool = new AtomicBoolean(false);
 
         return this.webClient.post()
-                //.uri("/v1/chat/completions")
+                .uri("/api/v3/chat/completions")
                 .body(Mono.just(chatRequest), ChatCompletionRequest.class)
                 .retrieve()
                 .bodyToFlux(String.class)
@@ -272,43 +273,48 @@ public class MoonshotApi {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ChatCompletionRequest {
 
-        private static final String DEFAULT_CHAT_MODEL = "gpt-3.5-turbo"; // You may need to adjust this
+        // You may need to adjust this
+        private static final String DEFAULT_CHAT_MODEL = "gpt-3.5-turbo";
 
         @JsonProperty("messages")
-        private final List<ChatCompletionMessage> messages;
+        private List<ChatCompletionMessage> messages;
 
         @JsonProperty("model")
-        private final String model;
+        private String model;
 
         @JsonProperty("max_tokens")
-        private final Integer maxTokens;
+        private Integer maxTokens;
 
         @JsonProperty("temperature")
-        private final Double temperature;
+        private Double temperature;
 
         @JsonProperty("top_p")
-        private final Double topP;
+        private Double topP;
 
         @JsonProperty("n")
-        private final Integer n;
+        private Integer n;
 
         @JsonProperty("frequency_penalty")
-        private final Double frequencyPenalty;
+        private Double frequencyPenalty;
 
         @JsonProperty("presence_penalty")
-        private final Double presencePenalty;
+        private Double presencePenalty;
 
         @JsonProperty("stop")
-        private final List<String> stop;
+        private List<String> stop;
 
         @JsonProperty("stream")
-        private final Boolean stream;
+        private Boolean stream;
 
         @JsonProperty("tools")
-        private final List<FunctionTool> tools;
+        private List<FunctionTool> tools;
 
         @JsonProperty("tool_choice")
-        private final Object toolChoice;
+        private Object toolChoice;
+
+        public ChatCompletionRequest() {
+
+        }
 
         // Full constructor
         public ChatCompletionRequest(List<ChatCompletionMessage> messages, String model, Integer maxTokens,
@@ -1048,7 +1054,6 @@ public class MoonshotApi {
         }
     }
 
-
     /**
      * Options for Moonshot chat completions.
      *
@@ -1057,7 +1062,7 @@ public class MoonshotApi {
      * @author Alexandros Pappas
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class MoonshotChatOptions {
+    public static class MoonshotChatOptions implements ChatOptions {
 
         /**
          * ID of the model to use

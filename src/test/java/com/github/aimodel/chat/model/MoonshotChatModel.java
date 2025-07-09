@@ -4,7 +4,9 @@ import com.github.aimodel.chat.messages.AssistantMessage;
 import com.github.aimodel.chat.messages.MessageType;
 import com.github.aimodel.chat.messages.ToolResponseMessage;
 import com.github.aimodel.chat.metadata.*;
+import com.github.aimodel.chat.prompt.ChatOptions;
 import com.github.aimodel.chat.prompt.Prompt;
+import com.github.aimodel.util.ModelOptionsUtils;
 import com.github.aimodel.util.UsageUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -117,7 +119,6 @@ public class MoonshotChatModel implements ChatModel, StreamingChatModel {
                         return new ChatResponse(new ArrayList<>());
                     }
                 }));
-
     }
 
     private ChatResponseMetadata from(MoonshotApi.ChatCompletion result, Usage usage) {
@@ -185,7 +186,16 @@ public class MoonshotChatModel implements ChatModel, StreamingChatModel {
             }
         }).flatMap(List::stream).collect(Collectors.toList());
 
-        return new MoonshotApi.ChatCompletionRequest(chatCompletionMessages, stream);
+        MoonshotApi.ChatCompletionRequest request = new MoonshotApi.ChatCompletionRequest(chatCompletionMessages, stream);
+
+        if (prompt.getOptions() != null) {
+            MoonshotApi.MoonshotChatOptions updatedRuntimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
+                    MoonshotApi.MoonshotChatOptions.class);
+
+            request = ModelOptionsUtils.merge(updatedRuntimeOptions, request, MoonshotApi.ChatCompletionRequest.class);
+        }
+
+        return request;
     }
 
     /**

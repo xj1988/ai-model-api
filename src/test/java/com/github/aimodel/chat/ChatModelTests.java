@@ -109,6 +109,13 @@ class ChatModelTests {
 
     @Test
     void testVolcanoEngineChatModelIntegration() {
+        // 从环境变量获取配置
+        String modelId = System.getenv("YOUR_MODEL_ID");
+        String apiKey = System.getenv("YOUR_API_KEY");
+        if (modelId == null || apiKey == null) {
+            throw new IllegalStateException("YOUR_MODEL_ID and YOUR_API_KEY environment variables must be set");
+        }
+
         // 实现火山引擎ChatModel的匿名内部类
         ChatModel volcanoChatModel = prompt -> {
             // Prompt转换为火山引擎API请求格式
@@ -124,13 +131,6 @@ class ChatModelTests {
                 }
                 apiMessage.put("content", message.getText());
                 apiMessages.add(apiMessage);
-            }
-
-            // 从环境变量获取配置
-            String modelId = System.getenv("YOUR_MODEL_ID");
-            String apiKey = System.getenv("YOUR_API_KEY");
-            if (modelId == null || apiKey == null) {
-                throw new IllegalStateException("YOUR_MODEL_ID and YOUR_API_KEY environment variables must be set");
             }
 
             Map<String, Object> body = new HashMap<>();
@@ -223,9 +223,14 @@ class ChatModelTests {
 
     @Test
     void chatCompletionStream() {
+        // 从环境变量获取配置
         String modelId = System.getenv("YOUR_MODEL_ID");
         String apiKey = System.getenv("YOUR_API_KEY");
-        ChatModel volcanoChatModel = new MoonshotChatModel(new MoonshotApi("https://ark.cn-beijing.volces.com/api/v3/chat/completions", apiKey));
+        if (modelId == null || apiKey == null) {
+            throw new IllegalStateException("YOUR_MODEL_ID and YOUR_API_KEY environment variables must be set");
+        }
+
+        ChatModel volcanoChatModel = new MoonshotChatModel(new MoonshotApi("https://ark.cn-beijing.volces.com/", apiKey));
         Flux<ChatResponse> response = volcanoChatModel.stream(new Prompt(new UserMessage("Hello world"),
                 new DefaultChatOptionsBuilder().model(modelId).temperature(0.8).build()));
 
